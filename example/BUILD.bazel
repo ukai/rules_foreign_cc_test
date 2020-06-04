@@ -1,0 +1,29 @@
+load("@rules_foreign_cc//tools/build_defs:cmake.bzl", "cmake_external")
+
+package(default_visibility = ["//visibility:public"])
+
+cmake_external(
+    name = "example",
+    cache_entries = {
+        "CMAKE_BUILD_TYPE": "Release",
+        "LLVM_ENABLE_PROJECTS": "clang",
+    },
+    cmake_options = ["-GNinja"],
+    lib_source = "@llvm//:all",
+    working_directory = "llvm",
+    # https://github.com/bazelbuild/rules_foreign_cc/issues/329
+    # use ninja to run commands in parallel by default.
+    make_commands = [
+        "ninja clang-scan-deps",
+        "ninja install",
+    ],
+    static_libraries = [
+        "libLLVMCore.a",
+    ],
+    # Note: Remote connection/protocol failed with: execution failed INVALID_ARGUMENT: Input tree has 92767 files, above the maximum of 70000
+    # https://github.com/bazelbuild/rules_foreign_cc/issues/404
+    tags = [
+        "no-remote",
+    ],
+)
+

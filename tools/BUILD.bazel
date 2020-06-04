@@ -1,0 +1,38 @@
+load("@rules_foreign_cc//tools/build_defs/native_tools:native_tools_toolchain.bzl", "native_tool_toolchain")
+
+package(default_visibility = ["//visibility:public"])
+
+native_tool_toolchain(
+    name = "cmake_tool_linux",
+    path = "cmake_linux/cmake-3.16.2-Linux-x86_64/bin/cmake",
+    target = "@cmake_linux//:all",
+    visibility = ["//visibility:public"],
+)
+
+toolchain(
+    name = "prebuilt_cmake_toolchain_linux",
+    exec_compatible_with = [
+        "@bazel_tools//platforms:linux",
+        "@bazel_tools//platforms:x86_64",
+    ],
+    toolchain = ":cmake_tool_linux",
+    toolchain_type = "@rules_foreign_cc//tools/build_defs:cmake_toolchain",
+)
+
+native_tool_toolchain(
+    name = "ninja_tool_linux",
+    path = "ninja_linux/ninja",
+    target = "@ninja_linux//:all",
+    visibility = ["//visibility:public"],
+)
+
+toolchain(
+    name = "prebuilt_ninja_toolchain_linux",
+    exec_compatible_with = [
+        "@bazel_tools//platforms:linux",
+        "@bazel_tools//platforms:x86_64",
+    ],
+    toolchain = ":ninja_tool_linux",
+    toolchain_type = "@rules_foreign_cc//tools/build_defs:ninja_toolchain",
+)
+
